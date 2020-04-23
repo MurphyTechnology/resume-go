@@ -15,7 +15,7 @@ func init() {
 	sqladdress := beego.AppConfig.String("sqladd")
 	sqluser := beego.AppConfig.String("sqluser")
 	sqlpwd := beego.AppConfig.String("sqlpwd")
-	sqlother := beego.AppConfig.String("sqother")
+	sqlother := beego.AppConfig.String("sqlother")
 	orm.RegisterDataBase("default",
 		sqltype,
 		sqluser+":"+sqlpwd+"@tcp("+sqladdress+")"+sqlother,
