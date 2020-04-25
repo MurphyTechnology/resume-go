@@ -123,4 +123,13 @@ func init() {
 				MethodParams:     param.Make(),
 				Filters:          nil,
 				Params:           nil})
+	beego.GlobalControllerRouter["resume/controllers:ResumeController"] =
+		append(beego.GlobalControllerRouter["resume/controllers:ResumeController"],
+			beego.ControllerComments{
+				Method:           "CreateQrcode",
+				Router:           `/createQrcode`,
+				AllowHTTPMethods: []string{"post"},
+				MethodParams:     param.Make(),
+				Filters:          nil,
+				Params:           nil})
 }

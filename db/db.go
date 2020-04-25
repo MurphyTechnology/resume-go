@@ -21,5 +21,5 @@ func init() {
 		sqluser+":"+sqlpwd+"@tcp("+sqladdress+")"+sqlother,
 		maxIdle,
 		maxConn)
-	orm.RegisterModel(new(dao.User), new(dao.Skill), new(dao.Event))
+	orm.RegisterModel(new(dao.User), new(dao.Skill), new(dao.Event), new(dao.Education), new(dao.Company), new(dao.Works), new(dao.Honor))
 }

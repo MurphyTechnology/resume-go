@@ -154,10 +154,10 @@ func (this *ResumeController) EnbleEvent() {
 	var c string
 	var e bool
 	if c, ok := m["code"].(string); ok {
-		log.Fatal(c)
+		log.Println(c)
 	}
 	if e, ok2 := m["enable"].(bool); ok2 {
-		log.Fatal(e)
+		log.Println(e)
 	}
 	if err == nil {
 
@@ -214,10 +214,10 @@ func (this *ResumeController) EnableSkill() {
 	var c string
 	var e bool
 	if c, ok := m["code"].(string); ok {
-		log.Fatal(c)
+		log.Println(c)
 	}
 	if e, ok2 := m["enable"].(bool); ok2 {
-		log.Fatal(e)
+		log.Println(e)
 	}
 	if err == nil {
 		err := service.EnableSkill(c, e)
@@ -238,7 +238,7 @@ func (this *ResumeController) DelSkill() {
 	err := json.Unmarshal([]byte(data), &m)
 	var c string
 	if c, ok := m["code"].(string); ok {
-		log.Fatal(c)
+		log.Println(c)
 	}
 	if err == nil {
 		skill, err := service.DeleteSkill(c)
@@ -249,4 +249,24 @@ func (this *ResumeController) DelSkill() {
 		}
 	}
 	this.ServeJSON()
+}
+
+// @Success 200 {string} logout success
+// @router /createQrcode [post]
+func (this *ResumeController) CreateQrcode() {
+	data := this.Ctx.Input.RequestBody
+	m := make(map[string]interface{})
+	err := json.Unmarshal([]byte(data), &m)
+	if c, ok := m["keyword"].(string); ok {
+		log.Println(c)
+		if err == nil {
+			qr, err := service.CreateQrcode(c)
+			if err != nil {
+				this.Data["json"] = r.Fail()
+			} else {
+				this.Data["json"] = r.Success(qr)
+			}
+		}
+		this.ServeJSON()
+	}
 }

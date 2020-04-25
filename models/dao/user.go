@@ -22,6 +22,9 @@ type User struct {
 	Native   string    `json:"native"`
 	Keyword  string    `json:"keyword"`
 	Watch    int       `json:"watch"`
+	City     string    `json:"city"`
+	Expect   string    `json:"expect"`
+	Year     string    `json:"year"`
 	base.BaseData
 }
 
@@ -54,7 +57,15 @@ func SelectUserByCode(code string) (user User, err error) {
 	return
 }
 
-func StateUser(code string, modifledUser string, enable bool) error {
+func UpdateKeyword(code string, keyword string) (update int64, err error) {
+	o := orm.NewOrm()
+	update, err = o.QueryTable("user").Filter("code", code).Update(orm.Params{
+		"keyword": keyword,
+	})
+	return
+}
+
+func (user User) State(code string, modifledUser string, enable bool) error {
 	o := orm.NewOrm()
 	_, err := o.QueryTable("user").Filter("code", code).Update(orm.Params{
 		"enable":        enable,
@@ -74,27 +85,24 @@ func (user User) Insert() (int64, error) {
 	return id, err
 }
 
-func DeleteUser(code string, deteleUser string) (update int64, err error) {
+func (user User) Delete(code string, deteleUser string) (int64, error) {
 	o := orm.NewOrm()
-	update, err = o.QueryTable("user").Filter("code", code).Update(orm.Params{
+	update, err := o.QueryTable(new(User)).Filter("code", code).Update(orm.Params{
 		"modifled_user": deteleUser,
 		"delete_user":   deteleUser,
 		"detele_time":   time.Now(),
 		"delete":        1,
 	})
-	return
+	return update, err
 }
 
 func (user User) Update() (id int64, err error) {
 	o := orm.NewOrm()
 	id, err = o.Update(&user)
-	return
-}
-
-func UpdateKeyword(code string, keyword string) (update int64, err error) {
-	o := orm.NewOrm()
-	update, err = o.QueryTable("user").Filter("code", code).Update(orm.Params{
-		"keyword": keyword,
-	})
+	if err != nil {
+		err = o.Rollback()
+	} else {
+		err = o.Commit()
+	}
 	return
 }
