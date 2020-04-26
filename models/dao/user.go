@@ -25,12 +25,14 @@ type User struct {
 	City     string    `json:"city"`
 	Expect   string    `json:"expect"`
 	Year     string    `json:"year"`
+	Age      int       `json:"age" orm:"-"`
 	base.BaseData
 }
 
 func SelectUserByKeyword(keyword string) (user User, err error) {
 	o := orm.NewOrm()
 	err = o.QueryTable("user").Filter("keyword", keyword).One(&user)
+	user.Age = time.Now().Year() - user.Birthday.Year()
 	user.Watch += 1
 	o.Update(&user)
 	if err == orm.ErrMultiRows {
@@ -46,6 +48,7 @@ func SelectUserByKeyword(keyword string) (user User, err error) {
 func SelectUserByCode(code string) (user User, err error) {
 	o := orm.NewOrm()
 	err = o.QueryTable("user").Filter("code", code).One(&user)
+	user.Age = time.Now().Year() - user.Birthday.Year()
 	if err == orm.ErrMultiRows {
 		// 多条的时候报错
 		log.Printf("Returned Multi Rows Not One")

@@ -11,8 +11,10 @@ type Event struct {
 	Code        string    `json:"code"`
 	Name        string    `json:"name"`
 	CompanyCode string    `json:"company"`
-	StartTime   time.Time `json:"start_time"`
-	EndTime     time.Time `json:"end_time"`
+	StartTime   time.Time `json:"-"`
+	EndTime     time.Time `json:"-"`
+	Start       string    `json:"start_time" orm:"-"`
+	End         string    `json:"end_time" orm:"-"`
 	Describe    string    `json:"describe"`
 	Harvest     string    `json:"harvest"`
 	base.BaseData
@@ -21,6 +23,10 @@ type Event struct {
 func SelectEventAll(companyCode string) (event []Event) {
 	o := orm.NewOrm()
 	all, err := o.QueryTable(new(Event)).Filter("enable", true).Filter("delete", false).Filter("company_code", companyCode).All(&event)
+	for i := 0; i < len(event); i++ {
+		event[i].End = fmt.Sprintf(`%s`, event[i].EndTime.Format("2006/01"))
+		event[i].Start = fmt.Sprintf(`%s`, event[i].StartTime.Format("2006/01"))
+	}
 	fmt.Println(all, err)
 	return
 }

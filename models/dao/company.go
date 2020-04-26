@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"fmt"
 	"github.com/astaxie/beego/orm"
 	"log"
 	"resume/models/dao/base"
@@ -11,8 +12,10 @@ type Company struct {
 	Code        string    `json:"code"`
 	CompanyName string    `json:"company_name"`
 	CompanyCode string    `json:"company_code"`
-	Start       time.Time `json:"start"`
-	End         time.Time `json:"end"`
+	Start       time.Time `json:"-"`
+	End         time.Time `json:"-"`
+	StartYM     string    `json:"start" orm:"-"`
+	EndYM       string    `json:"end" orm:"-"`
 	base.BaseData
 }
 
@@ -60,6 +63,10 @@ func (com Company) State(code string, modifledUser string, enable bool) error {
 func SelectCompanyByCode(code string) (com []Company, err error) {
 	o := orm.NewOrm()
 	o.QueryTable("company").Filter("enable", true).Filter("delete", false).Filter("code", code).All(&com)
+	for i := 0; i < len(com); i++ {
+		com[i].EndYM = fmt.Sprintf(`%s`, com[i].End.Format("2006/01"))
+		com[i].StartYM = fmt.Sprintf(`%s`, com[i].Start.Format("2006/01"))
+	}
 	if err == orm.ErrMultiRows {
 		// 多条的时候报错
 		log.Printf("Returned Multi Rows Not One")
@@ -68,6 +75,5 @@ func SelectCompanyByCode(code string) (com []Company, err error) {
 		// 没有找到记录
 		log.Printf("Not row found")
 	}
-	return
 	return
 }
