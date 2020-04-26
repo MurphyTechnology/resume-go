@@ -24,7 +24,7 @@ jobs:
       - name: Checkout stage
         uses: actions/checkout@master
       - name: build stage
-        run: go build -o resume .
+        run: go build -o server .
 #       - name: Unit test stage
 #         run: go test -v .
       - name: Deploy stage
@@ -34,5 +34,5 @@ jobs:
           ARGS: ${{ secrets.ARGS }}
           REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          SOURCE: ${{ secrets.SOURCE }}
+          SOURCE: "server"
           TARGET: ${{ secrets.REMOTE_TARGET }}
