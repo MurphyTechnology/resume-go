@@ -36,3 +36,12 @@ jobs:
           REMOTE_USER: ${{ secrets.REMOTE_USER }}
           SOURCE: "server"
           TARGET: ${{ secrets.REMOTE_TARGET }}
+      - name: ssh
+        uses: fifsky/ssh-action@master
+        with:
+          command: |
+            cd /data/auto/go
+            ./start.sh resume
+          host: ${{ secrets.REMOTE_HOST }}
+          user: root
+          key: ${{ secrets.SERVER_SSH_KEY}}
